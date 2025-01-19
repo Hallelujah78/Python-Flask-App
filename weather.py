@@ -19,7 +19,17 @@ def get_current_weather(city="Dublin", country_code="IE"):
 if __name__ == "__main__":
     print("\n*** Get Current Weather Conditions ***")
     city = input("\nPlease enter a city name: ")
+
+    # check for empty string or string with only spaces
+    if not bool(city.strip()):  # bool() is like an existence/null check
+        city = "Kansas City"
+
     country = input("\nPlease enter a 2-letter country code: ")
+
+    # check for empty string or string with only spaces
+    if not bool(country.strip()):  # bool() is like an existence/null check
+        country = "US"
+
     weather_data = get_current_weather(city, country)
 
     print("\n")

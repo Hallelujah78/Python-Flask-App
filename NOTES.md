@@ -152,3 +152,95 @@ def index():
 
 - now we can run our app and it works!
 - still some issues, empty input causes an error and if a location doesn't exist then the server falls over since we're trying to access weather_data['name'] when weather data is probably an error from the server
+- update our weather module so default values are added if the user doesn't input anything
+
+```python
+# check for empty string or string with only spaces
+    if not bool(city.strip()):  # bool() is like an existence/null check
+        city = "Kansas City"
+
+    country = input("\nPlease enter a 2-letter country code: ")
+
+    # check for empty string or string with only spaces
+    if not bool(country.strip()):  # bool() is like an existence/null check
+        country = "US"
+```
+
+- `bool()` returns false if `city` or `country` are empty strings, so `not bool()` returns true if the input is empty, and so the code in the if block is executed if the string is empty
+- update our get_weather function in server.py with the same code to add default values
+
+```python
+def get_weather():
+    # get the form data - city
+    city = request.args.get("city")
+
+    # check for empty string or string with only spaces
+    if not bool(city.strip()):  # bool() is like an existence/null check
+        city = "Kansas City"
+
+    # get form data - country
+    country = request.args.get("country")
+
+    # check for empty string or string with only spaces
+    if not bool(country.strip()):  # bool() is like an existence/null check
+        country = "US"
+
+    weather_data = get_current_weather(city, country)
+```
+
+- next we have to handle not found errors, where the city isn't in the weather_data json object
+- entering nonsense at the command line we get
+
+```json
+{ "cod": "404", "message": "city not found" }
+```
+
+- in our successful request, the json object also has a `cod` prop, which is 200 (for success)
+- we could look for a 200 code to know we can display the data
+- add the following to server.py right after we make our request and get weather_data back
+
+```python
+# city not found by API
+    if int(weather_data["cod"]) < 200 or int(weather_data["cod"]) > 299:
+        return "City not found"
+```
+
+- this is temporary, but we add a `city-not-found.html` to templates to handle this
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>City Not Found</title>
+    <link
+      href="{{ url_for('static', filename='styles/style.css')}}"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <h1>City Not Found</h1>
+    <h2>Try again?</h2>
+    <form action="/weather">
+      <input type="text" name="city" id="city" placeholder="Enter a City" />
+      <input
+        type="text"
+        name="country"
+        id="country"
+        placeholder="Enter a 2-letter country code"
+      />
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>
+```
+
+- update so we're don't just return a string "City not found":
+
+```python
+ # city not found by API
+    if int(weather_data["cod"]) < 200 or int(weather_data["cod"]) > 299:
+        return render_template("city-not-found.html")
+```

@@ -23,9 +23,24 @@ def index():
 def get_weather():
     # get the form data - city
     city = request.args.get("city")
+
+    # check for empty string or string with only spaces
+    if not bool(city.strip()):  # bool() is like an existence/null check
+        city = "Kansas City"
+
     # get form data - country
     country = request.args.get("country")
+
+    # check for empty string or string with only spaces
+    if not bool(country.strip()):  # bool() is like an existence/null check
+        country = "US"
+
     weather_data = get_current_weather(city, country)
+
+    # city not found by API
+    if int(weather_data["cod"]) < 200 or int(weather_data["cod"]) > 299:
+        return render_template("city-not-found.html")
+
     return render_template(
         "weather.html",
         title=weather_data["name"],
@@ -39,5 +54,4 @@ def get_weather():
 # make it a module
 if __name__ == "__main__":
     # run on locahost port 8000
-
     serve(app, host="0.0.0.0", port=8000)
