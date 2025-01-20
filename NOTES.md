@@ -244,3 +244,30 @@ def get_weather():
     if int(weather_data["cod"]) < 200 or int(weather_data["cod"]) > 299:
         return render_template("city-not-found.html")
 ```
+
+- next we deploy on render.com
+- create a new web service on render
+- click on credentials and select your github account (assuming already connected to render)
+
+![alt text](image.png)
+
+- click on `configure in github`
+  ![alt text](image-1.png)
+- in GitHub, add the repo you want to allow Render to access and hit `connect`
+
+![alt text](image-2.png)
+
+- this brings you to the web app deployment page on Render
+- you can change the name of the service to something appropriate
+- update the build command, by default it is: `pip install -r requirements.txt`
+- change this to:
+
+```bash
+pip install -U pip && pip install -r requiremets.txt
+```
+
+- set the start command to: `python3 server.py`
+- make sure you're using the free instance
+- add the environment variable (weather api key) in advanced options
+- must also add the python version as an environment variable for Render: `PYTHON_VERSION` and value is `3.12.3`
+- you can get python version by typing `py --version` in terminal in VSCode
