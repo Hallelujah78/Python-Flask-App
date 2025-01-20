@@ -271,3 +271,4 @@ pip install -U pip && pip install -r requiremets.txt
 - add the environment variable (weather api key) in advanced options
 - must also add the python version as an environment variable for Render: `PYTHON_VERSION` and value is `3.12.3`
 - you can get python version by typing `py --version` in terminal in VSCode
+- click `Deploy Web Service' in Render
